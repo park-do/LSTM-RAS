@@ -22,7 +22,7 @@
 				{
 					if(this.status == 200 && this.readyState == this.DONE)
 					{
-						alert(unescape(encodeURIComponent(xmlHttp.response)));
+						//alert(unescape(encodeURIComponent(xmlHttp.response)));
 						displayData(xmlHttp);
 					}
 				}
@@ -45,8 +45,8 @@
 				//var xmlObj = xmlHttp.responseXML;
 				//alert(xmlObj)
 				//var tr = xmlObj.getElementByTagName("tr").value;
-				alert(xmlHttp.response)
-				document.getElementById("result_table").innerHTML = decodeURIComponent(escape(xmlHttp.response));
+				//alert(xmlHttp.response)
+				document.getElementById("result_table").innerHTML = JSON.parse(xmlHttp.response)
 			}
 		</script>
 

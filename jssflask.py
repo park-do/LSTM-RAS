@@ -94,7 +94,7 @@ class User(Resource):
 		return trList
 
 # api.add_resource(User, '/users')
-# api.representations['application/xml'] = output_xml
+api.representations['application/xml'] = output_xml
 
 if __name__ == '__main__':
 	app.run(debug=True, host="0.0.0.0", port=int(os.getenv('VCAP_APP_PORT', '10000')))
