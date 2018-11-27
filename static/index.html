@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="UTF-8" />
 		<style>
 			.red { color: #ff0000; }
 			.blue{ color: #0000ff; font-weight: : bold; }
@@ -11,7 +12,7 @@
 		<br>
 		<textarea id="Text1" cols="60" rows="10"></textarea>
 		<button onclick="loadDoc();">보내기</button>
-		<script type="text/javascript">
+		<script type="text/javascript"  charset="UTF-8" >
 
 			function loadDoc()
 			{
@@ -21,6 +22,7 @@
 				{
 					if(this.status == 200 && this.readyState == this.DONE)
 					{
+						alert(unescape(encodeURIComponent(xmlHttp.response)));
 						displayData(xmlHttp);
 					}
 				}
@@ -33,16 +35,22 @@
 
 				xmlHttp.open("POST", "http://127.0.0.1:10000/jss", true)
 				xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+				xmlHttp.setRequestHeader('Content-Type', 'application/xml');
 				xmlHttp.setRequestHeader('charset', 'UTF-8');
 				xmlHttp.send(xml);
 			}
 
 			function displayData(xmlHttp)
 			{
-				var xmlObj = xmlHttp.responseXML;
-				var classList = xmlObj.getElementsByTagName("class")
-				document.getElementById("classList").innerHTML="Class Count : "+ classList.length;
+				//var xmlObj = xmlHttp.responseXML;
+				//alert(xmlObj)
+				//var tr = xmlObj.getElementByTagName("tr").value;
+				alert(xmlHttp.response)
+				document.getElementById("result_table").innerHTML = decodeURIComponent(escape(xmlHttp.response));
 			}
 		</script>
+
+		<table id = "result_table" >
+		</table>
 	</body>
 </html>
