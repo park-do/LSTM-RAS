@@ -4,9 +4,10 @@ import simplexml
 from flask import Flask, make_response, request, render_template
 from flask_restful import Resource, Api, reqparse, abort
 from xml.etree.ElementTree import fromstring
-from datetime import datetime
+import datetime
 import os
 import requests
+import LSTM.Classifier2
 
 classList = []
 
@@ -31,12 +32,23 @@ class User(Resource):
 
 		# code = json_data['code']
 		# classList.append({"name":name, "code":code})
-		industry = "경영"
-		url = "http://api.saramin.co.kr/job-search?keywords=" + industry
+		requestXmlRoot = fromstring(request.data)
+
+		print(requestXmlRoot.find("jss").text)
+		print(requestXmlRoot.find("option").find("startTerm").text)
+		print(requestXmlRoot.find("option").find("headhunter").text)
+
+		# print(LSTM.Classifier2.classify(requestXmlRoot.find("jss").text))
+
+		industry = LSTM.Classifier2.classify(requestXmlRoot.find("jss").text)
+		print(industry)
+		url = "http://api.saramin.co.kr/job-search?keywords=" + industry + "&deadline=" + \
+			  str((datetime.datetime.now()+datetime.timedelta(days=int(requestXmlRoot.find("option").find("startTerm").text))))	+ ""
+		print(url)
 		response = requests.get(url)
 
 		tree = fromstring(response.text)
-		print(tree.find("jobs").findall("job")[0].find("company").find("name").attrib['href'])
+		# print(tree.find("jobs").findall("job")[0].find("company").find("name").attrib['href'])
 
 		jobList  = tree.find("jobs").findall("job")
 
@@ -46,8 +58,8 @@ class User(Resource):
 			jobLink = job.find("url").text
 			companyName = job.find("company").find("name").text
 			companyLink = job.find("company").find("name").attrib['href']
-			startTime = str(datetime.fromtimestamp(int(job.find("opening-timestamp").text)))
-			endTime = str(datetime.fromtimestamp(int(job.find("expiration-timestamp").text)))
+			startTime = str(datetime.datetime.fromtimestamp(int(job.find("opening-timestamp").text)))
+			endTime = str(datetime.datetime.fromtimestamp(int(job.find("expiration-timestamp").text)))
 			salary = job.find('salary').text
 
 			position = job.find("position")
@@ -72,7 +84,7 @@ class User(Resource):
 
 			tr = "<tr>"
 			tr += "<td>"
-			tr += "<a target='_blank' href='"+jobLink+"'>"+title+"</a>"
+			tr += "<b><a target='_blank' href='"+jobLink+"'>"+title+"</a></b>"
 			tr += "</td>"
 
 			tr += "<td>"
@@ -82,8 +94,10 @@ class User(Resource):
 			tr += "<td>" + startTime + "</td>"
 			tr += "<td>" + endTime + "</td>"
 			tr += "<td>" + location + "</td>"
-			tr += "<td>" + industry + "</td>"
-			tr += "<td>" + category + "</td>"
+			if industry is not None:
+				tr += "<td>" + industry + "</td>"
+			if category is not None:
+				tr += "<td>" + category + "</td>"
 			tr += "<td>" + req_exp + "</td>"
 			tr += "<td>" + req_edu + "</td>"
 			tr += "<td>" + salary + "</td>"

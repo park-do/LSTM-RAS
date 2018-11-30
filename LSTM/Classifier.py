@@ -1,3 +1,4 @@
+# -- coding: utf-8 --
 import tensorflow as tf
 import numpy as np
 import LSTM.Bi_LSTM as Bi_LSTM
@@ -20,6 +21,7 @@ class Classifier:
         # 파라미터 셋팅====================================================
 
         # 모델 리스토어
+
         saver = tf.train.Saver()
         tf.reset_default_graph()
         init = tf.global_variables_initializer()
@@ -49,8 +51,8 @@ class Classifier:
         tokens = self.okt.nouns(jss)
         embedding = self.W2V.Convert2Vec(w2vmodel, tokens)
         zero_pad = self.W2V.Zero_padding(embedding, self.Batch_size, self.Maxseq_length, self.Vector_size)
-        result = self.sess.run(tf.argmax(prediction, 1), feed_dict={self.X: zero_pad, self.seq_len: [len(tokens)]})
-        print(self.sess.run(prediction, feed_dict={self.X: zero_pad, self.seq_len: [len(tokens)]}))
+        result = self.sess.run(tf.argmax(self.prediction, 1), feed_dict={self.X: zero_pad, self.seq_len: [len(tokens)]})
+        print(self.sess.run(self.prediction, feed_dict={self.X: zero_pad, self.seq_len: [len(tokens)]}))
         if result == 0:
             return '경영지원'
         elif result == 1:

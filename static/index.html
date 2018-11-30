@@ -2,16 +2,35 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<style>
-			.red { color: #ff0000; }
-			.blue{ color: #0000ff; font-weight: : bold; }
-		</style>
-	</head>
-	<body>
-		<h1>자소서 재활용 검색 시스템</h1>
+		<title>자소서 검색 시스템</title>
+		<link rel="stylesheet" href="static/css/bootstrap.css">
+  	</head>
+  	<body>
+		<!--background-color: #DDEEFF -->
+		<div align = "center" style = "background-image:url('/static/bg1.jpg'); background-size:100%;" >
+			<br><br>
+			<div class = "btn btn-secondary">
+				<h1>자소서 활용 지원 기업 검색 서비스</h1>
+			</div>
+			<br>
+			<br>
+			<textarea id="Text1" cols="75" rows="10" placeholder="자소서를 여기에 입력하세요"></textarea>
 		<br>
-		<textarea id="Text1" cols="60" rows="10"></textarea>
-		<button onclick="loadDoc();">보내기</button>
+			<table>
+				<tr>
+					<td>
+						<ul>
+							<li><h6>기간내 검색 : 마감일이 <input type = "text" id = "startTerm" size="5"/> 일 이후인 채용만 보기</h6></li>
+							<li><h6>헤드헌터 제외하기 : <input type="checkbox" id="headhunter" checked/></h6></li>
+						</ul>
+					</td>
+					<td style="padding-left: 50px;">
+						<button type = "button" class = "btn btn-primary btn-lg" onclick="loadDoc();">보내기</button>
+					</td>
+				</tr>
+			</table>
+		<br>
+		</div>
 		<script type="text/javascript"  charset="UTF-8" >
 
 			function loadDoc()
@@ -29,14 +48,20 @@
 
 				var xml = '' +
 				  '<?xml version="1.0" encoding="UTF-8"?>' +
-				  '<jss>'+
-				  '<content>'+document.getElementById("Text1").value+'</cotent>'+
-				  '</jss>'
+				  '<root>' +
+				  '<jss>' + document.getElementById("Text1").value +
+				  '</jss>' +
+				  '<option>' +
+				  '<startTerm>' + document.getElementById("startTerm").value+'</startTerm>'+
+				  '<headhunter>'+ document.getElementById("headhunter").checked + '</headhunter>' +
+				  '</option>' +
+				  '</root>';
 
 				xmlHttp.open("POST", "http://127.0.0.1:10000/jss", true)
-				xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+				//xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 				xmlHttp.setRequestHeader('Content-Type', 'application/xml');
 				xmlHttp.setRequestHeader('charset', 'UTF-8');
+				//alert(xml);
 				xmlHttp.send(xml);
 			}
 
@@ -49,8 +74,29 @@
 				document.getElementById("result_table").innerHTML = JSON.parse(xmlHttp.response)
 			}
 		</script>
+		<font size = "2">
+			<table class = "table table-striped">
+				<thead>
+					<tr>
+						<th width = "30%">채용 제목</th>
+						<th width = "10%">회사 이름</th>
+						<th width = "7%">채용시작</th>
+						<th width = "7%">채용마감</th>
+						<th width = "10%">근무지</th>
+						<th width = "8%">회사분류</th>
+						<th width = "8%">직무분류</th>
+						<th width = "5%">경력</th>
+						<th width = "5%">학력</th>
+						<th width = "10%">연봉</th>
+					</tr>
+				</thead>
+				<tbody id = "result_table" >
 
-		<table id = "result_table" >
-		</table>
+				</tbody>
+			</table>
+		</font>
+
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script type = "text/javascript" src="static/js/bootstrap.js"></script>
 	</body>
 </html>
